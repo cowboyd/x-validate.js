@@ -1,0 +1,33 @@
+{
+  "name": "x-validate",
+  "version": "0.1.2",
+  "description": "Skeleton project demonstrating best practices for authoring and publishing the latest version of JavaScript to NPM.",
+  "main": "./lib/x-validate.js",
+  "jsnext:main": "./src/x-validate.js",
+  "scripts": {
+    "prepublish": "babel --optional runtime src/ --out-dir lib/",
+    "test": "mocha --reporter min --full-trace test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cowboyd/x-validate.js.git"
+  },
+  "keywords": [
+    "ui",
+    "immutable",
+    "valditation"
+  ],
+  "author": "Charles Lowell <cowboyd@frontside.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cowboyd/x-validate.js/issues"
+  },
+  "homepage": "https://github.com/cowboyd/x-validate.js#readme",
+  "dependencies": {
+    "babel-runtime": "^5.8.25"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "mocha": "^2.3.3"
+  }
+}
