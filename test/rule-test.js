@@ -67,10 +67,10 @@ describe("Rule", function() {
       expect(this.initial).to.not.equal(this.rule.state);
     });
     it("indicates that it is not idle but rejected", function() {
-      expect(this.rule.state.isIdle).to.equal(false);
-      expect(this.rule.state.isPending).to.equal(false);
-      expect(this.rule.state.isRejected).to.equal(true);
-      expect(this.rule.state.message).to.equal('is not bob');
+      expect(this.state.isIdle).to.equal(false);
+      expect(this.state.isPending).to.equal(false);
+      expect(this.state.isRejected).to.equal(true);
+      expect(this.state.message).to.equal('is not bob');
     });
     describe("reseting a rule", function() {
       beforeEach(function() {
@@ -78,11 +78,11 @@ describe("Rule", function() {
         this.rule.reset();
       });
       it("emits a new state", function() {
-        expect(this.rule.state.isIdle).to.equal(true);
-        expect(this.rule.state.isPending).to.equal(false);
-        expect(this.rule.state.isFulfilled).to.equal(false);
-        expect(this.rule.state.isRejected).to.equal(false);
-        expect(this.rule.state.isSettled).to.equal(false);
+        expect(this.state.isIdle).to.equal(true);
+        expect(this.state.isPending).to.equal(false);
+        expect(this.state.isFulfilled).to.equal(false);
+        expect(this.state.isRejected).to.equal(false);
+        expect(this.state.isSettled).to.equal(false);
       });
     });
   });
