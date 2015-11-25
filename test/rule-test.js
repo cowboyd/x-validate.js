@@ -1,4 +1,4 @@
-import { describe, beforeEach, it } from 'mocha';
+import { describe, beforeEach, afterEach, it } from 'mocha';
 import { expect } from 'chai';
 
 import Rule from '../src/rule';
@@ -30,6 +30,9 @@ describe("Rule", function() {
       this.initial = this.rule.state;
       this.promise = this.rule.evaluate('bob');
     });
+    afterEach(function() {
+      this.initial = this.rule.state;
+    });
     it("returns a promise", function() {
       expect(this.promise.then).to.be.instanceOf(Function);
     });
@@ -42,13 +45,10 @@ describe("Rule", function() {
     });
     describe("when the promise resolves", function() {
       beforeEach(function() {
-        this.initial = this.rule.state;
-      });
-      beforeEach(function() {
         return this.promise;
       });
       it("emits a new state", function() {
-        expect(this.initialx).to.not.equal(this.rule.state);
+        expect(this.initial).to.not.equal(this.rule.state);
       });
       it("indicates that it is no longer pending, but resolved", function() {
         expect(this.rule.state.isPending).to.equal(false);
