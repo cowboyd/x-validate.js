@@ -28,7 +28,7 @@ describe("Rule", function() {
   describe("running the rule on valid input", function() {
     beforeEach(function() {
       this.initial = this.rule.state;
-      this.promise = this.rule.run('bob');
+      this.promise = this.rule.evaluate('bob');
     });
     it("returns a promise", function() {
       expect(this.promise.then).to.be.instanceOf(Function);
@@ -54,6 +54,23 @@ describe("Rule", function() {
         expect(this.rule.state.isPending).to.equal(false);
         expect(this.rule.state.isFulfilled).to.equal(true);
       });
+    });
+  });
+  describe("running the rule on an invalid input", function() {
+    beforeEach(function() {
+      this.initial = this.rule.state;
+    });
+    beforeEach(function() {
+      return this.rule.evaluate('kevin').catch((err)=> {this.error = err; });
+    });
+    it("emits a new state", function() {
+      expect(this.initial).to.not.equal(this.rule.state);
+    });
+    it("indicates that it is not idle but rejected", function() {
+      expect(this.rule.state.isIdle).to.equal(false);
+      expect(this.rule.state.isPending).to.equal(false);
+      expect(this.rule.state.isRejected).to.equal(true);
+      expect(this.rule.state.message).to.equal('is not bob');
     });
   });
 });

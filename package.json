@@ -29,6 +29,7 @@
   "devDependencies": {
     "babel": "^5.8.23",
     "chai": "^3.4.1",
-    "mocha": "^2.3.3"
+    "mocha": "^2.3.3",
+    "require-all": "^2.0.0"
   }
 }

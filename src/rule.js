@@ -12,7 +12,7 @@ export default class Rule {
     });
   }
 
-  run(input) {
+  evaluate(input) {
     update(this, {
       isPending: true
     });
@@ -22,6 +22,12 @@ export default class Rule {
       update(this, {
         isPending: false,
         isFulfilled: true
+      });
+    }).catch((error)=> {
+      update(this, {
+        isPending: false,
+        isRejected: true,
+        message: error
       });
     });
   }
