@@ -72,5 +72,18 @@ describe("Rule", function() {
       expect(this.rule.state.isRejected).to.equal(true);
       expect(this.rule.state.message).to.equal('is not bob');
     });
+    describe("reseting a rule", function() {
+      beforeEach(function() {
+        this.initial = this.rule.state;
+        this.rule.reset();
+      });
+      it("emits a new state", function() {
+        expect(this.rule.state.isIdle).to.equal(true);
+        expect(this.rule.state.isPending).to.equal(false);
+        expect(this.rule.state.isFulfilled).to.equal(false);
+        expect(this.rule.state.isRejected).to.equal(false);
+        expect(this.rule.state.isSettled).to.equal(false);
+      });
+    });
   });
 });

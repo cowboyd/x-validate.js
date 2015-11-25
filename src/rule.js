@@ -31,6 +31,14 @@ export default class Rule {
       });
     });
   }
+
+  reset() {
+    update(this, {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: false
+    });
+  }
 }
 
 
