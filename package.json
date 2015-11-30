@@ -1,7 +1,7 @@
 {
   "name": "x-validate",
   "version": "0.1.2",
-  "description": "Skeleton project demonstrating best practices for authoring and publishing the latest version of JavaScript to NPM.",
+  "description": "Validations that are asynchronous, immutable and observable",
   "main": "./lib/x-validate.js",
   "jsnext:main": "./src/x-validate.js",
   "scripts": {
