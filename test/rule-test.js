@@ -4,16 +4,17 @@ import { expect } from 'chai';
 import Rule from '../src/rule';
 
 describe("Rule", function() {
+  function isBob(input, resolve, reject) {
+    if (input === 'bob') {
+      resolve();
+    } else {
+      reject('is not bob');
+    }
+  }
   beforeEach(function() {
     this.rule = new Rule({
       name: 'is-bob',
-      condition: (input, resolve, reject)=> {
-        if (input === 'bob') {
-          resolve();
-        } else {
-          reject('is not bob');
-        }
-      },
+      condition: isBob,
       observe: (next)=> { this.state = next; }
     });
     this.state = this.rule.state;
@@ -85,5 +86,45 @@ describe("Rule", function() {
         expect(this.state.isSettled).to.equal(false);
       });
     });
+  });
+  describe("with sub-rules", function() {
+    beforeEach(function() {
+      this.rule = new Rule({
+        name: 'required',
+        condition: (input, resolve, reject)=> {
+          if (!!input) {
+            resolve();
+          } else {
+            reject("can't be blank");
+          }
+        },
+        rules: {
+          isBob: {
+            name: 'is-bob',
+            condition: isBob
+          }
+        },
+        observe: (next)=> { this.state = next; }
+      });
+    });
+    it("can access dependents as a list or by name", function() {
+      expect(this.rule.state.rules.isBob).to.equal(this.rule.state.all[0]);
+    });
+    it("has an initial state for it and its children", function() {
+      expect(this.rule.state.isIdle).to.equal(true);
+      expect(this.rule.state.all.length).to.equal(1);
+      expect(this.rule.state.idle).to.deep.equal(this.rule.state.all);
+      let rule = this.rule.state.rules.isBob;
+      expect(rule.isIdle).to.equal(true);
+    });
+    describe("when the parent rule is satisfied", function() {
+      beforeEach(function() {
+        return this.rule.evaluate('bob');
+      });
+      it("emits a new state with the child rule", function() {
+        expect(this.state.rules.isBob.isFulfilled).to.equal(true);
+      });
+    });
+
   });
 });
