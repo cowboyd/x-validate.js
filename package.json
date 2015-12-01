@@ -3,6 +3,7 @@
   "version": "0.1.2",
   "description": "Validations that are asynchronous, immutable and observable",
   "main": "./lib/rule.js",
+  "files": ["lib", "src"],
   "jsnext:main": "./src/rule.js",
   "scripts": {
     "prepublish": "babel --optional runtime src/ --out-dir lib/",
