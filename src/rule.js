@@ -19,6 +19,12 @@ export default class Rule {
           });
           if (this.prereqs.every((p)=> p.state.isFulfilled)) {
             this.evaluateCondition(state.input);
+          } else if (state.isRejected) {
+            update(this, {
+              isPending: false,
+              isFulfilled: false,
+              isRejected: true
+            });
           }
         }
       }))});
@@ -50,6 +56,7 @@ export default class Rule {
 
   evaluateCondition(input) {
     update(this, {
+      input: input,
       isPending: true,
       isFulfilled: false,
       isRejected: false

@@ -125,6 +125,14 @@ describe("Rule", function() {
         expect(this.state.rules.isBob.isFulfilled).to.equal(true);
       });
     });
+    describe("when parent rule is not satisfied", function() {
+      beforeEach(function() {
+        return this.rule.evaluate('Jason');
+      });
+      it("emits a new state and is rejected", function() {
+        expect(this.state.isRejected).to.equal(true);
+      });
+    });
 
   });
 });
