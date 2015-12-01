@@ -2,17 +2,17 @@ import update from './update';
 
 export default class Rule {
   constructor(options = {}) {
-    options = Object.assign({
+    Object.assign(this, {
       condition: function() { return Promise.resolve(); },
       observe: function() {},
-      rules: {}
+      rules: {},
+      context: {}
     }, options);
-    this.observe = options.observe;
-    this.condition = options.condition;
 
-    let keys = Object.keys(options.rules);
+    let keys = Object.keys(this.rules);
     this.rules = keys.reduce((rules, key)=> {
       return Object.assign(rules, {[key]: new Rule(Object.assign(options.rules[key], {
+        context: this.context,
         observe: (state) => {
           update(this, (next)=> {
             next.rules = Object.assign({}, next.rules, {[key]: state});
@@ -62,7 +62,7 @@ export default class Rule {
       isRejected: false
     });
     return new Promise((resolve, reject)=> {
-      return this.condition(input, resolve, reject);
+      return this.condition.apply(this.context, [input, resolve, reject]);
     }).then(()=> {
       update(this, {
         isPending: false,
