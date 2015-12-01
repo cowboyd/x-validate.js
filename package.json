@@ -2,8 +2,8 @@
   "name": "x-validate",
   "version": "0.1.2",
   "description": "Validations that are asynchronous, immutable and observable",
-  "main": "./lib/x-validate.js",
-  "jsnext:main": "./src/x-validate.js",
+  "main": "./lib/rule.js",
+  "jsnext:main": "./src/rule.js",
   "scripts": {
     "prepublish": "babel --optional runtime src/ --out-dir lib/",
     "test": "mocha --reporter min --full-trace test/index.js"

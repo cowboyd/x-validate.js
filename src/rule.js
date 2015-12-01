@@ -15,7 +15,7 @@ export default class Rule {
       return Object.assign(rules, {[key]: new Rule(Object.assign(options.rules[key], {
         observe: (state) => {
           update(this, (next)=> {
-            next.rules[key] = state;
+            next.rules = Object.assign({}, next.rules, {[key]: state});
           });
           if (this.prereqs.every((p)=> p.state.isFulfilled)) {
             this.evaluateCondition(state.input);
@@ -51,7 +51,7 @@ export default class Rule {
   evaluateCondition(input) {
     update(this, {
       isPending: true,
-      isFulfiled: false,
+      isFulfilled: false,
       isRejected: false
     });
     return new Promise((resolve, reject)=> {
@@ -88,7 +88,8 @@ class State {
     } else {
       Object.assign(this, change);
     }
-    Object.freeze(this);
+    // Object.freeze(this);
+    // Object.freeze(this.rules);
   }
 
   get isIdle() {
