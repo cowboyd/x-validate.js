@@ -23,6 +23,7 @@ describe("Rule", function() {
     expect(this.state.isIdle).to.equal(true);
     expect(this.state.isPending).to.equal(false);
     expect(this.state.isFulfilled).to.equal(false);
+    expect(this.state.isUnfulfilled).to.equal(true);
     expect(this.state.isRejected).to.equal(false);
     expect(this.state.isSettled).to.equal(false);
   });
@@ -54,6 +55,7 @@ describe("Rule", function() {
       it("indicates that it is no longer pending, but resolved", function() {
         expect(this.rule.state.isPending).to.equal(false);
         expect(this.rule.state.isFulfilled).to.equal(true);
+        expect(this.rule.state.isUnfulfilled).to.equal(false);
       });
     });
   });
@@ -114,6 +116,7 @@ describe("Rule", function() {
       expect(this.rule.state.isIdle).to.equal(true);
       expect(this.rule.state.all.length).to.equal(1);
       expect(this.rule.state.idle).to.deep.equal(this.rule.state.all);
+      expect(this.rule.state.idle).to.deep.equal(this.rule.state.unfulfilled);
       let rule = this.rule.state.rules.isBob;
       expect(rule.isIdle).to.equal(true);
     });

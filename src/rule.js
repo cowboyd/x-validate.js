@@ -107,6 +107,10 @@ class State {
     return this.isFulfilled || this.isRejected;
   }
 
+  get isUnfulfilled() {
+    return !this.isFulfilled;
+  }
+
   get all() {
     return Object.keys(this.rules).reduce((rules, key)=> {
       return rules.concat(this.rules[key]);
@@ -123,6 +127,10 @@ class State {
 
   get fulfilled() {
     return this.all.filter((rule)=> rule.isFulfilled);
+  }
+
+  get unfulfilled() {
+    return this.all.filter((rule)=> rule.isUnfulfilled);
   }
 
   get rejected() {
