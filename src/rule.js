@@ -3,7 +3,7 @@ import update from './update';
 export default class Rule {
   constructor(options = {}) {
     Object.assign(this, {
-      condition: function() { return Promise.resolve(); },
+      condition: function(input, resolve) { resolve(); },
       observe: function() {},
       rules: {},
       context: {}
