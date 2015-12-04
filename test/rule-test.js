@@ -86,6 +86,8 @@ describe("Rule", function() {
         expect(this.state.isFulfilled).to.equal(false);
         expect(this.state.isRejected).to.equal(false);
         expect(this.state.isSettled).to.equal(false);
+        expect(this.state.input).to.equal(undefined);
+        expect(this.state.message).to.equal(undefined);
       });
     });
   });

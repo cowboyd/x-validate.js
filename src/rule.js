@@ -77,6 +77,16 @@ export default class Rule {
     });
   }
 
+  idle() {
+    update(this, {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: false,
+      input: undefined,
+      message: undefined
+    });
+  }
+
   evaluateCondition(input) {
     this.start(input);
     return new Promise((resolve, reject)=> {
@@ -88,13 +98,6 @@ export default class Rule {
     });
   }
 
-  idle() {
-    update(this, {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: false
-    });
-  }
 }
 
 
