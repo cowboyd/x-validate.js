@@ -20,12 +20,10 @@ export default class Rule {
           if (this.prereqs.every((p)=> p.state.isFulfilled)) {
             this.evaluateCondition(state.input);
           } else if (state.isRejected) {
-            update(this, {
-              isPending: false,
-              isFulfilled: false,
-              isRejected: true
-            });
+            this.reject();
           }
+          // else idle
+
         }
       }))});
     }, {});
@@ -47,37 +45,50 @@ export default class Rule {
 
   evaluate(input) {
     if (this.prereqs.length) {
-      this.reset();
+      this.idle();
       return Promise.all(this.prereqs.map((p)=> p.evaluate(input)));
     } else {
       return this.evaluateCondition(input);
     }
   }
 
-  evaluateCondition(input) {
+  start(input) {
     update(this, {
       input: input,
       isPending: true,
       isFulfilled: false,
       isRejected: false
     });
-    return new Promise((resolve, reject)=> {
-      return this.condition.apply(this.context, [input, resolve, reject]);
-    }).then(()=> {
-      update(this, {
-        isPending: false,
-        isFulfilled: true
-      });
-    }).catch((error)=> {
-      update(this, {
-        isPending: false,
-        isRejected: true,
-        message: error
-      });
+  }
+
+  fulfill() {
+    update(this, {
+      isPending: false,
+      isFulfilled: true
     });
   }
 
-  reset() {
+  reject(error) {
+    update(this, {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: true,
+      message: error
+    });
+  }
+
+  evaluateCondition(input) {
+    this.start(input);
+    return new Promise((resolve, reject)=> {
+      return this.condition.apply(this.context, [input, resolve, reject]);
+    }).then(()=> {
+      this.fulfill();
+    }).catch((error)=> {
+      this.reject(error);
+    });
+  }
+
+  idle() {
     update(this, {
       isPending: false,
       isFulfilled: false,

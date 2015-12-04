@@ -78,7 +78,7 @@ describe("Rule", function() {
     describe("reseting a rule", function() {
       beforeEach(function() {
         this.initial = this.rule.state;
-        this.rule.reset();
+        this.rule.idle();
       });
       it("emits a new state", function() {
         expect(this.state.isIdle).to.equal(true);
