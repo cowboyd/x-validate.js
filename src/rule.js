@@ -17,13 +17,15 @@ export default class Rule {
           update(this, (next)=> {
             next.rules = Object.assign({}, next.rules, {[key]: state});
           });
-          if (this.prereqs.every((p)=> p.state.isFulfilled)) {
-            this.evaluateCondition(state.input);
-          } else if (state.isRejected) {
+          if (state.isRejected) {
             this.reject();
+          } else if (this.prereqs.every((p)=> p.state.isFulfilled)) {
+            this.evaluateCondition(state.input);
+          } else if (this.prereqs.some((p)=> p.state.isPending)) {
+            this.start();
+          } else {
+            this.idle();
           }
-          // else idle
-
         }
       }))});
     }, {});
@@ -53,6 +55,7 @@ export default class Rule {
   }
 
   start(input) {
+    if (this.state.isPending) { return; }
     update(this, {
       input: input,
       isPending: true,
@@ -78,6 +81,7 @@ export default class Rule {
   }
 
   idle() {
+    if (this.state.isIdle) { return; }
     update(this, {
       isPending: false,
       isFulfilled: false,

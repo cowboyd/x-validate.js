@@ -138,6 +138,88 @@ describe("Rule", function() {
         expect(this.state.isRejected).to.equal(true);
       });
     });
-
   });
+
+  describe("with mandatory name and description", function() {
+    beforeEach(function() {
+      function required(input, resolve, reject) {
+        if (!!input) {
+          resolve();
+        } else {
+          reject("can't be blank");
+        }
+      }
+      this.rule = new Rule({
+        observe: (state)=> {
+          this.state = state;
+        },
+        rules: {
+          name: {
+            rules: {
+              required: {
+                condition: required
+              }
+            }
+          },
+          description: {
+            condition: required
+          }
+        }
+      });
+      this.state = this.rule.state;
+    });
+
+    it("is idle", function() {
+      expect(this.state.isIdle).to.equal(true);
+    });
+    describe("when the name is populated with valid data", function() {
+      beforeEach(function() {
+        this.initial = this.rule.state;
+        return this.rule.rules.name.evaluate('Jimothy');
+      });
+      it("emits a new state", function() {
+        expect(this.state).to.not.equal(this.initial);
+      });
+      it("marks the name rule as fulfilled", function() {
+        expect(this.state.rules.name.isFulfilled).to.equal(true);
+      });
+      it("marks the entire rule is still idle", function() {
+        expect(this.state.isIdle).to.equal(true);
+      });
+
+      describe(". If the name is removed", function() {
+        beforeEach(function() {
+          this.initial = this.rule.state;
+          return this.rule.rules.name.evaluate('');
+        });
+
+        it("emits a new state", function() {
+          expect(this.initial).to.not.equal(this.state);
+        });
+        it("rejects the entire rule", function() {
+          expect(this.state.isRejected).to.equal(true);
+        });
+        it("keeps the description rule idle", function() {
+          expect(this.state.rules.description.isIdle).to.equal(true);
+        });
+
+        describe(" and then the name is added back", function() {
+          beforeEach(function() {
+            this.initial = this.rule.state;
+            return this.rule.rules.name.evaluate('Jimothy');
+          });
+          it("emits a new state", function() {
+            expect(this.initial).to.not.equal(this.state);
+          });
+          it("becomes idle at the top level", function() {
+            expect(this.state.isIdle).to.equal(true);
+            expect(this.state.isRejected).to.equal(false);
+          });
+        });
+
+      });
+
+    });
+  });
+
 });
