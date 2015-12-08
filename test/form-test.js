@@ -2,6 +2,65 @@ import Form from '../src/form';
 import { describe, before, beforeEach, it } from 'mocha';
 import { expect } from 'chai';
 
+function createForm(test, object) {
+  test.form = new Form({
+    object: object,
+    observe: (state)=> { this.state = state; },
+    rules: {
+      name: {
+        isRequired: true
+      },
+      description: {
+        isRequired: true
+      },
+      gender: {
+        isRequired: false,
+        condition: (input, resolve, reject)=> {
+          if (input === 'M' || input === 'F') {
+            resolve();
+          } else {
+            reject("must be M/F");
+          }
+        }
+      }
+    }
+  });
+  test.state = test.form.state;
+}
+
+describe("Form: ", function() {
+  describe("a new form", function() {
+    beforeEach(function() {
+      createForm(this, null);
+    });
+    it("has an initial value", function() {
+      expect(this.state.value).to.equal(null);
+    });
+    it("has a current buffer", function() {
+      expect(this.state.buffer).to.deep.equal({
+        name: null,
+        description: null,
+        gender: null
+      });
+    });
+    it("starts out dirty", function() {
+      expect(this.state.isDirty).to.equal(true);
+      expect(this.state.isClean).to.equal(false);
+    });
+    it("starts out as idle", function() {
+      expect(this.state.isIdle).to.equal(true);
+      expect(this.state.isFulfilled).to.equal(false);
+      expect(this.state.isPending).to.equal(false);
+      expect(this.state.isRejected).to.equal(false);
+    });
+    it("is not submittable", function() {
+      expect(this.state.isSubmittable).to.equal(false);
+      expect(this.state.isUnsubmittable).to.equal(true);
+    });
+  });
+});
+
+
 describe.skip('Form: ', function () {
   function createForm(test, type) {
     function required(input, resolve, reject) {

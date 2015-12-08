@@ -5,9 +5,13 @@ export default class Form {
   constructor(options = {}) {
     Object.assign(this, {
       observe: function() {},
-      rules: {}
+      rules: {},
+      object: null
     }, options);
     this.rule = new Rule({
+      isRequired: Object.keys(this.rules).some((k)=> {
+        return this.rules[k].isRequired;
+      }),
       rules: this.rules,
       observe: (ruleState)=> {
         update(this, {
@@ -15,7 +19,9 @@ export default class Form {
         });
       }
     });
+
     this.state = new FormState({
+      object: this.object,
       type: this.type,
       rule: this.rule.state
     });
@@ -35,19 +41,50 @@ class FormState {
     } else {
       Object.assign(this, change);
     }
+
+    this.buffer = this.buffer || Object.keys(this.rule.rules).reduce((buffer, name)=> {
+      let value = null;
+      if (this.object) {
+        value = this.object[name];
+      }
+      return Object.assign(buffer, {[name]: value});
+    }, {});
+
+    if (this.object == null) {
+      this.value = null;
+    } else {
+      this.value = this.value || this.buffer;
+    }
     // Object.freeze(this);
     // Object.freeze(this.rules);
   }
 
-  get isNew() {
-    return this.type === "new";
+  get isDirty() {
+    return this.value !== this.buffer;
   }
 
-  get isEdit() {
-    return this.type === "edit";
+  get isClean() {
+    return !this.isDirty;
   }
-  get isSubmittable() {
+
+  get isIdle() {
+    return this.rule.isIdle;
+  }
+
+  get isPending() {
+    return this.rule.isPending;
+  }
+
+  get isFulfilled() {
     return this.rule.isFulfilled;
+  }
+
+  get isRejected() {
+    return this.rule.isRejected;
+  }
+
+  get isSubmittable() {
+    return this.isDirty && this.rule.isFulfilled;
   }
 
   get isUnsubmittable() {

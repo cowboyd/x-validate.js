@@ -10,7 +10,7 @@ export default class Rule {
       context: {}
     }, options);
 
-    let keys = Object.keys(this.rules);
+    let keys = this.keys = Object.keys(this.rules);
     this.rules = keys.reduce((rules, key)=> {
       return Object.assign(rules, {[key]: new Rule(Object.assign(options.rules[key], {
         context: this.context,
