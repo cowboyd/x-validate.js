@@ -28,10 +28,22 @@ export default class Form {
   }
 
   set(field, input) {
-    return this.rule.rules[field].evaluate(input);
+    let wasClean = this.state.isClean;
+    update(this, {
+      buffer: Object.assign({}, this.state.buffer, {
+        [field]: input
+      })
+    });
+    if (wasClean) {
+      let keys = Object.keys(this.state.buffer);
+      let rules = this.rule.rules;
+      let buffer = this.state.buffer;
+      return Promise.all(keys.map((key)=> rules[key].evaluate(buffer[key])));
+    } else {
+      return this.rule.rules[field].evaluate(input);
+    }
   }
 }
-
 
 class FormState {
   constructor(previous = {}, change = ()=>{}) {

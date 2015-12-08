@@ -5,7 +5,7 @@ import { expect } from 'chai';
 function createForm(test, object) {
   test.form = new Form({
     object: object,
-    observe: (state)=> { this.state = state; },
+    observe: (state)=> { test.state = state; },
     rules: {
       name: {
         isRequired: true
@@ -56,6 +56,51 @@ describe("Form: ", function() {
     it("is not submittable", function() {
       expect(this.state.isSubmittable).to.equal(false);
       expect(this.state.isUnsubmittable).to.equal(true);
+    });
+  });
+
+  describe("an edit form", function() {
+    beforeEach(function() {
+      createForm(this, {
+        name: "Jimothy",
+        description: "That guy",
+        gender: null
+      });
+    });
+    it("is not submittable", function() {
+      expect(this.state.isUnsubmittable).to.equal(true);
+      expect(this.state.isSubmittable).to.equal(false);
+    });
+    it("starts out as clean", function() {
+      expect(this.state.isClean).to.equal(true);
+    });
+    it("contains the initial values in the buffer", function() {
+      expect(this.state.buffer).to.deep.equal({
+        name: "Jimothy",
+        description: "That guy",
+        gender: null
+      });
+    });
+    it("starts out as idle", function() {
+      expect(this.state.isIdle).to.equal(true);
+    });
+    describe("setting the gender to M", function() {
+      beforeEach(function() {
+        this.initial = this.form.state;
+        return this.form.set('gender', 'M');
+      });
+      it("emits a new state", function() {
+        expect(this.state).not.to.equal(this.initial);
+      });
+      it("is submittable", function() {
+        expect(this.state.isSubmittable).to.equal(true);
+      });
+      it("is dirty", function() {
+        expect(this.state.isDirty).to.equal(true);
+      });
+      it("is fulfilled", function() {
+        expect(this.state.isFulfilled).to.equal(true);
+      });
     });
   });
 });
