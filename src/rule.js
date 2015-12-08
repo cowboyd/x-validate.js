@@ -3,6 +3,7 @@ import update from './update';
 export default class Rule {
   constructor(options = {}) {
     Object.assign(this, {
+      isRequired: false,
       condition: function(input, resolve) { resolve(); },
       observe: function() {},
       rules: {},
@@ -32,8 +33,9 @@ export default class Rule {
 
     this.state = new State({
       input: null,
+      isRequired: this.isRequired,
       isPending: false,
-      isFulfilled: false,
+      isFulfilled: !this.isRequired,
       isRejected: false,
       rules: keys.reduce((rules, key)=> {
         return Object.assign(rules, {[key]: this.rules[key].state });
@@ -46,7 +48,13 @@ export default class Rule {
   }
 
   evaluate(input) {
-    if (this.prereqs.length) {
+    if (!input && this.isRequired) {
+      this.reject("can't be blank");
+      return Promise.reject("can't be blank");
+    } else if (!input && !this.isRequired) {
+      this.fulfill();
+      return Promise.resolve();
+    } else if (this.prereqs.length) {
       this.idle();
       return Promise.all(this.prereqs.map((p)=> p.evaluate(input)));
     } else {
@@ -115,6 +123,10 @@ class State {
     }
     // Object.freeze(this);
     // Object.freeze(this.rules);
+  }
+
+  get isOptional() {
+    return !this.isRequired;
   }
 
   get isIdle() {

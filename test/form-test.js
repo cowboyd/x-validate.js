@@ -2,7 +2,7 @@ import Form from '../src/form';
 import { describe, before, beforeEach, it } from 'mocha';
 import { expect } from 'chai';
 
-describe('Form: ', function () {
+describe.skip('Form: ', function () {
   function createForm(test, type) {
     function required(input, resolve, reject) {
       if (!!input) {
