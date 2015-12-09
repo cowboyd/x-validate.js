@@ -29,11 +29,8 @@ export default class Form {
 
   set(field, input) {
     let wasClean = this.state.isClean;
-    update(this, {
-      buffer: Object.assign({}, this.state.buffer, {
-        [field]: input
-      })
-    });
+    update(this, this.state.set(field, input));
+
     if (wasClean) {
       let keys = Object.keys(this.state.buffer);
       let rules = this.rule.rules;
@@ -58,6 +55,14 @@ class FormState {
 
     // Object.freeze(this);
     // Object.freeze(this.rules);
+  }
+
+  set(key, value) {
+    return new FormState(this, {
+      buffer: Object.assign({}, this.buffer, {
+        [key]: value
+      })
+    });
   }
 
   get value() {
