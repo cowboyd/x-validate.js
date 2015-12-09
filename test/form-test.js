@@ -61,6 +61,20 @@ describe("Form: ", function() {
       expect(this.state.isSubmittable).to.equal(false);
       expect(this.state.isUnsubmittable).to.equal(true);
     });
+    describe("entering in valid values", function() {
+      beforeEach(function() {
+        this.initial = this.state;
+        return this.form.set('name', 'Jimothy').then(()=> {
+          return this.form.set('description', 'Dat Guy');
+        });
+      });
+      it("emits a new state", function() {
+        expect(this.state).to.not.equal(this.initial);
+      });
+      it("becomes submittable", function() {
+        expect(this.state.isSubmittable).to.equal(true);
+      });
+    });
   });
 
   describe("an edit form", function() {
