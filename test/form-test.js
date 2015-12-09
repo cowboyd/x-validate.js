@@ -61,6 +61,9 @@ describe("Form: ", function() {
       expect(this.state.isSubmittable).to.equal(false);
       expect(this.state.isUnsubmittable).to.equal(true);
     });
+    it("is not submitting", function() {
+      expect(this.state.isSubmitting).to.equal(false);
+    });
     describe("entering in valid values", function() {
       beforeEach(function() {
         this.initial = this.state;
@@ -74,6 +77,112 @@ describe("Form: ", function() {
       it("becomes submittable", function() {
         expect(this.state.isSubmittable).to.equal(true);
       });
+
+      describe("subitting the form asynchronously", function() {
+        beforeEach(function() {
+          this.initial = this.state;
+          this.promise = this.form.submit((buffer)=> {
+            this.buffer = buffer;
+            return new Promise((resolve, reject)=> {
+              this.resolve = resolve;
+              this.reject = reject;
+            });
+          });
+        });
+        it("emits a new state", function() {
+          expect(this.state).not.to.equal(this.initial);
+        });
+        it("marks itself as submitting", function() {
+          expect(this.state.isSubmitting).to.equal(true);
+        });
+        it("is no longer submittable", function() {
+          expect(this.state.isSubmittable).to.equal(false);
+        });
+        it("passes the current buffer to the submit action", function() {
+          expect(this.buffer).to.deep.equal({
+            name: "Jimothy",
+            description: "Dat Guy",
+            gender: null
+          });
+        });
+        describe("when the action resolves", function() {
+          beforeEach(function() {
+            this.initial = this.state;
+            this.resolve();
+            return this.promise;
+          });
+          it("emits a new state", function() {
+            expect(this.state).not.to.equal(this.initial);
+          });
+          it("is submitted", function() {
+            expect(this.state.isSubmitted).to.equal(true);
+            expect(this.state.isSubmitting).to.equal(false);
+          });
+          it("is still not submittable", function() {
+            expect(this.state.isSubmittable).to.equal(false);
+          });
+        });
+        describe("when the action rejects", function() {
+          beforeEach(function() {
+            this.initial = this.state;
+            this.reject("nope");
+            return this.promise.catch(()=> {});
+          });
+          it("emits a new state", function() {
+            expect(this.state).not.to.equal(this.initial);
+          });
+          it("is not submitted", function() {
+            expect(this.state.isSubmitted).to.equal(false);
+          });
+          it("has an error", function() {
+            expect(this.state.error).to.equal("nope");
+          });
+          it("is still submittable", function() {
+            expect(this.state.isSubmittable).to.equal(true);
+          });
+          it("is not submitting", function() {
+            expect(this.state.isSubmitting).to.equal(false);
+          });
+        });
+      });
+
+      describe("submitting the form synchronously", function() {
+        beforeEach(function() {
+          this.initial = this.state;
+          return this.form.submit((buffer)=> { this.buffer = buffer;});
+        });
+        it("emits a new state", function() {
+          expect(this.state).not.to.equal(this.initial);
+        });
+        it("passes the buffer to the submit action", function() {
+          expect(this.buffer).to.deep.equal({
+            name: "Jimothy",
+            description: "Dat Guy",
+            gender: null
+          });
+        });
+        it.skip("is submitted", function() {
+          expect(this.state.isSubmitted).to.equal(true);
+        });
+      });
+
+      describe("submitting the form synchronously with an error", function() {
+        beforeEach(function() {
+          this.initial = this.state;
+          return this.form.submit(()=> { throw 'nope';}).catch(()=> {});
+        });
+        it("emits a new state", function() {
+          expect(this.state).not.to.equal(this.initial);
+        });
+        it("is submittable", function() {
+          expect(this.state.isSubmittable).to.equal(true);
+        });
+        it("captures the error mesages", function() {
+          expect(this.state.error).to.equal('nope');
+        });
+      });
+
+
     });
   });
 
