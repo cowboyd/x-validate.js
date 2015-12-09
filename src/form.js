@@ -54,25 +54,27 @@ class FormState {
       Object.assign(this, change);
     }
 
-    this.buffer = this.buffer || Object.keys(this.rule.rules).reduce((buffer, name)=> {
-      let value = null;
-      if (this.object) {
-        value = this.object[name];
-      }
-      return Object.assign(buffer, {[name]: value});
-    }, {});
+    this.buffer = this.buffer || this.value;
 
-    if (this.object == null) {
-      this.value = null;
-    } else {
-      this.value = this.value || this.buffer;
-    }
     // Object.freeze(this);
     // Object.freeze(this.rules);
   }
 
+  get value() {
+    if (!this._value) {
+      this._value =  Object.keys(this.rule.rules).reduce((buffer, name)=> {
+        let value = null;
+        if (this.object) {
+          value = this.object[name];
+        }
+        return Object.assign(buffer, {[name]: value});
+      }, {});
+    }
+    return this._value;
+  }
+
   get isDirty() {
-    return this.value !== this.buffer;
+    return this.object == null || this.value !== this.buffer;
   }
 
   get isClean() {

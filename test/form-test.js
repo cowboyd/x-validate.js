@@ -34,7 +34,11 @@ describe("Form: ", function() {
       createForm(this, null);
     });
     it("has an initial value", function() {
-      expect(this.state.value).to.equal(null);
+      expect(this.state.value).to.deep.equal({
+        name: null,
+        description: null,
+        gender: null
+      });
     });
     it("has a current buffer", function() {
       expect(this.state.buffer).to.deep.equal({
