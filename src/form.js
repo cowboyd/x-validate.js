@@ -46,21 +46,22 @@ export default class Form {
   submit(action) {
     update(this, this.state.submit());
 
-    let promise = Promise.resolve();
-
     try {
       let result = action(this.state.buffer);
-      if (result.then) {
-        promise = result;
+      if (result && result.then) {
+        return result.then(()=> {
+          update(this, this.state.resolve());
+        }).catch((error)=> {
+          update(this, this.state.reject(error));
+        });
+      } else {
+        update(this, this.state.resolve());
+        return Promise.resolve();
       }
     } catch (e) {
-      promise = Promise.reject(e);
+      update(this, this.state.reject(e));
+      return Promise.reject(e);
     }
-    return promise.then(()=> {
-      update(this, this.state.resolve());
-    }).catch((error)=> {
-      update(this, this.state.reject(error));
-    });
   }
 }
 

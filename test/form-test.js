@@ -161,7 +161,10 @@ describe("Form: ", function() {
             gender: null
           });
         });
-        it.skip("is submitted", function() {
+        it("is not submittable", function() {
+          expect(this.state.isSubmittable).to.equal(false);
+        });
+        it("is submitted", function() {
           expect(this.state.isSubmitted).to.equal(true);
         });
       });
@@ -181,8 +184,6 @@ describe("Form: ", function() {
           expect(this.state.error).to.equal('nope');
         });
       });
-
-
     });
   });
 
