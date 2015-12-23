@@ -22,7 +22,6 @@ export default class Form {
 
     this.state = new FormState({
       object: this.object,
-      type: this.type,
       rule: this.rule.state,
       isSubmitting: false,
       isSubmitted: false
