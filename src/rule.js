@@ -66,6 +66,7 @@ export default class Rule {
     if (this.state.isPending) { return; }
     update(this, {
       input: input,
+      message: null,
       isPending: true,
       isFulfilled: false,
       isRejected: false

@@ -86,6 +86,19 @@ describe("Rules:", function () {
       it("is marked as rejected", function() {
         expect(this.state.isRejected).to.equal(true);
       });
+      it("contains a mesage", function() {
+        expect(this.state.message).to.equal("is not bob");
+      });
+
+      describe("and then evaluating on different input", function() {
+        beforeEach(function() {
+          this.rule.evaluate('different string');
+        });
+        it("resets the message", function() {
+          expect(this.state.message).to.equal(null);
+        });
+      });
+
     });
     describe("evaluating the rule on valid input", function() {
       beforeEach(function() {
