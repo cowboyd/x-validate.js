@@ -6,7 +6,10 @@ export default class Form {
     Object.assign(this, {
       observe: function() {},
       rules: {},
-      object: null
+      object: null,
+      read(object, key) {
+        return object[key];
+      }
     }, options);
     this.rule = new Rule({
       isRequired: Object.keys(this.rules).some((k)=> {
@@ -23,6 +26,7 @@ export default class Form {
     this.state = new FormState({
       object: this.object,
       rule: this.rule.state,
+      read: this.read,
       isSubmitting: false,
       isSubmitted: false
     });
@@ -112,7 +116,7 @@ class FormState {
       this._value =  Object.keys(this.rule.rules).reduce((buffer, name)=> {
         let value = null;
         if (this.object) {
-          value = this.object[name];
+          value = this.read(this.object, name);
         }
         return Object.assign(buffer, {[name]: value});
       }, {});
