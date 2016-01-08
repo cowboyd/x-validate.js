@@ -149,26 +149,26 @@ class State {
   }
 
   get idle() {
-    return this.all.filter((rule)=> rule.isIdle);
+    return this.all.filter(rule => rule.isIdle);
   }
 
   get pending() {
-    return this.all.filter((rule)=> rule.isPending);
+    return this.all.filter(rule => rule.isPending);
   }
 
   get fulfilled() {
-    return this.all.filter((rule)=> rule.isFulfilled);
+    return this.all.filter(rule => rule.isFulfilled);
   }
 
   get unfulfilled() {
-    return this.all.filter((rule)=> rule.isUnfulfilled);
+    return this.all.filter(rule => rule.isUnfulfilled);
   }
 
   get rejected() {
-    return this.all.filter((rule)=> rule.isRejected);
+    return this.all.filter(rule => rule.isRejected);
   }
 
   get settled() {
-    return this.all.filter((rule)=> rule.isSettled);
+    return this.all.filter(rule => rule.isSettled);
   }
 }

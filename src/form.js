@@ -27,9 +27,30 @@ export default class Form {
       object: this.object,
       rule: this.rule.state,
       read: this.read,
-      isSubmitting: false,
-      isSubmitted: false
+      isSubmitting: false
     });
+  }
+
+  reset() {
+    this.rule = new Rule({
+      isRequired: Object.keys(this.rules).some((k)=> {
+        return this.rules[k].isRequired;
+      }),
+      rules: this.rules,
+      observe: (ruleState)=> {
+        update(this, {
+          rule: ruleState
+        });
+      }
+    });
+
+    this.state = new FormState({
+      object: this.object,
+      rule: this.rule.state,
+      read: this.read,
+      isSubmitting: false
+    });
+    update(this, this.state);
   }
 
   set(field, input) {
@@ -53,12 +74,12 @@ export default class Form {
       let result = action(this.state.buffer);
       if (result && result.then) {
         return result.then(()=> {
-          update(this, this.state.resolve());
+          this.reset();
         }).catch((error)=> {
           update(this, this.state.reject(error));
         });
       } else {
-        update(this, this.state.resolve());
+        this.reset();
         return Promise.resolve();
       }
     } catch (e) {
@@ -94,13 +115,6 @@ class FormState {
   submit() {
     return new FormState(this, {
       isSubmitting: true
-    });
-  }
-
-  resolve() {
-    return new FormState(this, {
-      isSubmitting: false,
-      isSubmitted: true
     });
   }
 
@@ -149,7 +163,7 @@ class FormState {
   }
 
   get isSubmittable() {
-    return this.isDirty && !this.isSubmitting && !this.isSubmitted && this.rule.isFulfilled;
+    return this.isDirty && !this.isSubmitting && this.rule.isFulfilled;
   }
 
   get isUnsubmittable() {

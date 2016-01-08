@@ -114,12 +114,11 @@ describe("Form: ", function() {
           it("emits a new state", function() {
             expect(this.state).not.to.equal(this.initial);
           });
-          it("is submitted", function() {
-            expect(this.state.isSubmitted).to.equal(true);
-            expect(this.state.isSubmitting).to.equal(false);
-          });
           it("is still not submittable", function() {
             expect(this.state.isSubmittable).to.equal(false);
+          });
+          it("resets the form", function() {
+            expect(this.state.isClean).to.equal(false);
           });
         });
         describe("when the action rejects", function() {
@@ -130,9 +129,6 @@ describe("Form: ", function() {
           });
           it("emits a new state", function() {
             expect(this.state).not.to.equal(this.initial);
-          });
-          it("is not submitted", function() {
-            expect(this.state.isSubmitted).to.equal(false);
           });
           it("has an error", function() {
             expect(this.state.error).to.equal("nope");
@@ -163,9 +159,6 @@ describe("Form: ", function() {
         });
         it("is not submittable", function() {
           expect(this.state.isSubmittable).to.equal(false);
-        });
-        it("is submitted", function() {
-          expect(this.state.isSubmitted).to.equal(true);
         });
       });
 
@@ -229,6 +222,16 @@ describe("Form: ", function() {
       it("is fulfilled", function() {
         expect(this.state.isFulfilled).to.equal(true);
       });
+      describe("submitting the form synchronously", function() {
+        beforeEach(function() {
+          this.initial = this.state;
+          return this.form.submit((buffer)=> { this.buffer = buffer;});
+        });
+        it("resets the form", function() {
+          expect(this.state.isClean).to.equal(true);
+        });
+      });
     });
+
   });
 });
