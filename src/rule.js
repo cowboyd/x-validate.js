@@ -1,8 +1,9 @@
 import update from './update';
+import { assign, some, every } from './utils';
 
 export default class Rule {
   constructor(options = {}) {
-    Object.assign(this, {
+    assign(this, {
       isRequired: false,
       condition: function(input, resolve) { resolve(); },
       observe: function() {},
@@ -12,17 +13,17 @@ export default class Rule {
 
     let keys = this.keys = Object.keys(this.rules);
     this.rules = keys.reduce((rules, key)=> {
-      return Object.assign(rules, {[key]: new Rule(Object.assign(options.rules[key], {
+      return assign(rules, {[key]: new Rule(assign(options.rules[key], {
         context: this.context,
         observe: (state) => {
           update(this, (next)=> {
-            next.rules = Object.assign({}, next.rules, {[key]: state});
+            next.rules = assign({}, next.rules, {[key]: state});
           });
           if (state.isRejected) {
             this.reject();
-          } else if (this.prereqs.every((p)=> p.state.isFulfilled)) {
+          } else if (every(this.prereqs, (p)=> p.state.isFulfilled)) {
             this.evaluateCondition(state.input);
-          } else if (this.prereqs.some((p)=> p.state.isPending)) {
+          } else if (some(this.prereqs, (p)=> p.state.isPending)) {
             this.start();
           } else {
             this.idle();
@@ -38,7 +39,7 @@ export default class Rule {
       isFulfilled: !this.isRequired,
       isRejected: false,
       rules: keys.reduce((rules, key)=> {
-        return Object.assign(rules, {[key]: this.rules[key].state });
+        return assign(rules, {[key]: this.rules[key].state });
       }, {})
     });
   }

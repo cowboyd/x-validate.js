@@ -1,9 +1,10 @@
 import Rule from './rule';
 import update from './update';
+import { some, assign} from './utils';
 
 export default class Form {
   constructor(options = {}) {
-    Object.assign(this, {
+    assign(this, {
       observe: function() {},
       rules: {},
       object: null,
@@ -12,7 +13,7 @@ export default class Form {
       }
     }, options);
     this.rule = new Rule({
-      isRequired: Object.keys(this.rules).some((k)=> {
+      isRequired: some(Object.keys(this.rules), (k)=> {
         return this.rules[k].isRequired;
       }),
       rules: this.rules,
@@ -33,7 +34,7 @@ export default class Form {
 
   reset() {
     this.rule = new Rule({
-      isRequired: Object.keys(this.rules).some((k)=> {
+      isRequired: some(Object.keys(this.rules), (k) => {
         return this.rules[k].isRequired;
       }),
       rules: this.rules,
@@ -91,11 +92,11 @@ export default class Form {
 
 class FormState {
   constructor(previous = {}, change = ()=>{}) {
-    Object.assign(this, {}, previous);
+    assign(this, {}, previous);
     if (change.call) {
       change.call(this, this);
     } else {
-      Object.assign(this, change);
+      assign(this, change);
     }
 
     this.buffer = this.buffer || this.value;
@@ -106,7 +107,7 @@ class FormState {
 
   set(key, value) {
     return new FormState(this, {
-      buffer: Object.assign({}, this.buffer, {
+      buffer: assign({}, this.buffer, {
         [key]: value
       })
     });
@@ -132,7 +133,7 @@ class FormState {
         if (this.object) {
           value = this.read(this.object, name);
         }
-        return Object.assign(buffer, {[name]: value});
+        return assign(buffer, {[name]: value});
       }, {});
     }
     return this._value;
