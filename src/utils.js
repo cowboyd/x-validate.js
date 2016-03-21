@@ -2,7 +2,10 @@
 export function assign(object, ...hashes) {
   for (let i = 0; i < hashes.length; i++) {
     let hash = hashes[i];
-    for (let key in hash) {
+    let keys = Object.keys(hash);
+
+    for (let i = 0; i < keys.length; i++) {
+      let key = keys[i];
       object[key] = hash[key];
     }
   }
@@ -10,8 +13,14 @@ export function assign(object, ...hashes) {
 }
 
 // Array.prototype.some
-export function some(array, ...rest) {
-  return array.filter.apply(array, rest).length > 0;
+export function some(array, callback, thisArg=array) {
+  for (let i = 0; i < array.length; i++) {
+    let thing = array[i];
+    if (callback.call(thisArg, thing)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function every(array, ...rest) {
